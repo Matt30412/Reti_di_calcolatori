@@ -1,2 +1,5 @@
 # Reti_di_calcolatori
-Estrazioni dati e creazioni grafici, Librerie: pandas,seaborn,scapy
+Progetto Universitario: Matteo Mazzella, Matteo D'Orazio
+
+Estrazioni dati traffico rete.
+Librerie: pandas,seaborn,scapy
