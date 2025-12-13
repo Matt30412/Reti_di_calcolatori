@@ -27,6 +27,8 @@ OUTPUT_GRAPHS_DIR = os.path.join(OUTPUT_DIR, "Grafici_Comparativi")
 PCAP_FILENAME = "traffic.pcap"
 WHOIS_FILENAME = "whois_metadata.json"
 
+
+# Le catture sono state effettuate nell'ordine riportato  quì sotto, quindi uso questa mappa per etichettarle.
 ORDER_MAPPING = {
     'xiaomi': ["Gemini", "Copilot", "Perplexity", "ChatGPT"],
     'pixel':  ["ChatGPT", "Gemini", "Copilot", "Perplexity"]
@@ -110,7 +112,7 @@ def parse_port_to_package(session_dir: str) -> Dict[int, str]:
                         continue
                     pkg = m_pkg.group("pkg")
 
-                    # prende la prima occorrenza ip:port nella riga (euristica)
+                    # prende la prima occorrenza ip
                     m_ipport = IPPORT_RE.search(line)
                     if not m_ipport:
                         continue
@@ -169,7 +171,7 @@ class Conversation:
 
 def analyze_session(pcap_path: str, session_dir: str, whois_data: dict):
     """
-    - trace_summary.txt (capinfos-like)
+    - trace_summary.txt 
     - conversations_tcp.csv / conversations_udp.csv
     - dns_answers.csv / sni.csv / http_host.csv
     """
@@ -369,7 +371,7 @@ def analyze_session(pcap_path: str, session_dir: str, whois_data: dict):
 def export_session(out_dir: str, summary, conv_list, dns_rows, sni_rows, http_rows, whois_data):
     safe_mkdir(out_dir)
 
-    # trace_summary.txt (capinfos-like) :contentReference[oaicite:14]{index=14}
+    # trace_summary.txt
     with open(os.path.join(out_dir, "trace_summary.txt"), "w", encoding="utf-8") as f:
         f.write(f"PCAP: {summary['pcap_path']}\n")
         f.write(f"Duration (s): {summary['duration_sec']:.6f}\n")
@@ -467,8 +469,7 @@ def main():
 
     global_sessions = []
 
-    print("[START] Analisi conforme PDF: capinfos-like, conv TCP/UDP, DNS/SNI/HTTP Host, whois. ")
-
+    print("[START] Avvio analisi PCAP: riepilogo + conversazioni + DNS/SNI/HTTP (se presenti) + WHOIS (se presente).")
     for device in os.listdir(ROOT_DIR):
         d_path = os.path.join(ROOT_DIR, device)
         if not os.path.isdir(d_path):
@@ -551,5 +552,7 @@ def main():
     generate_minimal_graphs(df, OUTPUT_GRAPHS_DIR)
     print(f"\n[DONE] Output in: {OUTPUT_DIR}")
 
+# TODO: Per Matteo D. gestire anche IPv6 (al momento considero solo layer IP / IPv4).
+# TODO: Per Matteo M. migliorare il mapping package->porta (dipende molto dal formato dei log netstat).
 if __name__ == "__main__":
     main()
